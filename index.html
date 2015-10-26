@@ -1,0 +1,119 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+
+    <title>Social HUB</title>
+    <link rel="shortcut icon" type="text/css" href="img/icon.jpg">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link href='https://fonts.googleapis.com/css?family=Luckiest+Guy' rel='stylesheet' type='text/css'>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+    <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false"></script>
+
+    
+  </head>
+  <body>
+    <header>
+        <div>
+        <h1><p>Social Hub</p></h1>
+        <h2><p>Un lugar para todas las redes sociales</p></h2>
+        </div>
+    </header>
+    <section>
+      <div class="container">
+        <ul class="nav nav-tabs">
+          <li class="active"><a data-toggle="tab" href="#home">Inicio</a></li>
+          <li><a data-toggle="tab" href="#menu1">Registro</a></li>
+          <li><a data-toggle="tab" href="#menu2">Chat</a></li>
+          <li><a data-toggle="tab" href="#menu3">JSON</a></li>
+        </ul>
+
+        <div class="tab-content">
+          <div id="home" class="tab-pane fade in active">
+            <div id="contenido">
+              <p> Social HUB es un proyecto para la creación de una entorno web en el que el usuario podrá unificar la consulta y gestión de todas las redes sociales</p>
+
+              <div class="center">
+              <img src="img/socialhub.jpg">
+              </div>
+              <p> Desde el panel de control el usuario podría gestionar que redes sociales desea visualizar en el panel principal, de esta manera recibiría todos los mensajes en una sola visualización y con un solo log in, ordenados adem´as de manera cronológica</p>
+               </div>
+
+          </div>
+          <div id="menu1" class="tab-pane fade">
+
+            
+                <input type="text" id="nombre" placeholder='Nombre'>
+                <input type="text" id="apellido" placeholder='Apellido'>
+                <input type="text" id="correo" placeholder='example@example.com'>
+                <input type="radio" name="opcion" id="opcion1" value="twiter">Twiter
+                <input type="radio" name="opcion" id="opcion2" value="facebook">Facebook
+                <input type="submit" id="enviar" value="Registrar" onclick="registro()">
+            <script>
+              function registro(){
+                var myDataRef = new Firebase('https://fiery-torch-4557.firebaseio.com/');
+                var nombre = $('#nombre').val();
+                var apellido = $('#apellido').val();
+                var correo = $('#correo').val();
+                for(i=1;i<3;i++){
+                  if (document.getElementById("opcion"+i).checked==true){
+                    var opcion = document.getElementById("opcion"+i).value;
+                  }
+                }
+                myDataRef.push({nombre: nombre, apellido: apellido, correo: correo, opcion: opcion});
+                alert("Sus datos han sido registrados");
+              }
+              
+            </script>
+             
+          </div>
+          <div id="menu2" class="tab-pane fade" >
+            <div id='mensajesDiv'></div>
+            <input type='text' id='nombrechat' placeholder='Nombre'>
+            <input type='text' id='mensaje' placeholder='Mensaje'>
+            <script>
+              var myDataRef = new Firebase('https://fiery-torch-4557.firebaseio.com//');
+              $('#mensaje').keypress(function (e) {
+                if (e.keyCode == 13) {
+                  var name = $('#nombrechat').val();
+                  var text = $('#mensaje').val();
+                  myDataRef.push({name: name, text: text});
+                  $('#mensaje').val('');
+                }
+              });
+              myDataRef.on('child_added', function(snapshot) {
+                var message = snapshot.val();
+                displayChatMessage(message.name, message.text);
+              });
+              function displayChatMessage(name, text) {
+                $('<div/>').text(text).prepend($('<em/>').text(name+': ')).appendTo($('#mensajesDiv'));
+                $('#mensajesDiv')[0].scrollTop = $('#mensajesDiv')[0].scrollHeight;
+              };
+            </script>
+          </div>
+          <div id="menu3" class="tab-pane fade" >
+            <script src="js/Mycontroler.js"></script>
+            <div ng-app="info" ng-controller="lecturadatos"> 
+
+              <ul>
+                <li ng-repeat="x in eess">
+                  {{ x.properties.OBJECTID + ', ' + x.properties.MUNICIPIO + ', ' + x.properties.Empresa + ', (' + x.geometry.coordinates + ')'}}
+                </li>
+              </ul>           
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <footer>
+      
+    </footer>
+    
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  </body>
+</html>
